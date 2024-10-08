@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ORIGINAL BOILERPLATE CSS
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
+}*/
 
 #root {
   position: absolute;
@@ -16,7 +17,7 @@
 }
 
 #map-container {
-  height: 100%;
+  height: 100vh;
   width: 100%;
   /* temporarily set the background color so we can tell where the map container is positioned */
   background-color: lightgrey;
@@ -45,6 +46,7 @@
   cursor: pointer;
 }
 
+/* ORIGINAL BOILERPLATE CSS
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -63,3 +65,4 @@ body {
     text-wrap: balance;
   }
 }
+*/
