@@ -5,18 +5,28 @@ export default async function Cart(
   
 ): Promise<JSX.Element> {
   const { rows } = await sql`SELECT * FROM testTable`;
+  console.log(rows);
 
   return (
-    <div>
+    <>
+      <div id='map-container' />
+    </>
+    
+  );
+}
+/*
+prev db proof
+
+<div>
       {rows.map((row) => (
         <div key={row.id}>
           {row.name} - {row.role}
         </div>
       ))}
     </div>
-  );
-}
-/*
+
+prev boiler plate
+ 
 export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
