@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { sql } from "@vercel/postgres";
+import './App.css';
 
 export default async function Cart(
   
