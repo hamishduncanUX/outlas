@@ -19,10 +19,10 @@ an error
 */
 
 const INITIAL_CENTER = [
-  -74.0242,
-  40.6941
+  -4.205, 
+  57.122
 ]
-const INITIAL_ZOOM = 10.12
+const INITIAL_ZOOM = 6.56
 
 export default function Map() {
 
@@ -38,6 +38,7 @@ export default function Map() {
         mapRef.current = new mapboxgl.Map({
           container: mapContainerRef.current,
           center: center,
+          style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",            
           zoom: zoom
         });
 
@@ -56,11 +57,21 @@ export default function Map() {
         }
       }, [])
 
+      const handleButtonClick = () => {
+        mapRef.current.flyTo({
+          center: INITIAL_CENTER,
+          zoom: INITIAL_ZOOM
+        })
+      }
+
   return (
     <>
       <div className="sidebar">
         Longitude: {center[0].toFixed(4)} | Latitude: {center[1].toFixed(4)} | Zoom: {zoom.toFixed(2)}
       </div>
+      <button className='reset-button' onClick={handleButtonClick}>
+        Reset
+      </button>
       <div id='map-container' ref={mapContainerRef}/>
     </>    
   );
