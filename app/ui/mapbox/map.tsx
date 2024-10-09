@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
+import data from './mockApiData.json';
 
 //Proof of concept for mapbox-gl usage within nextjs (React) app
 
@@ -24,29 +25,30 @@ const INITIAL_CENTER = [
 ]
 const INITIAL_ZOOM = 6.56
 
+const features = data.map((x) => {
+  return {
+    geometry:
+    {
+      coordinates:
+      [
+        x.Long, x.Lat
+      ],
+      type: "Point"
+    },
+    properties: {
+      id: x.Slug,
+      markerColor: "#fc000b"
+    },
+    type: "Feature"
+  }
+})
+
+//console.log(features);
+
 // create empty locations geojson object
 let mapLocations = {
   type: "FeatureCollection",
-  features: [
-  {
-    geometry:
-     {
-       coordinates:
-       [
-         "-3.829261019496421",
-         "57.18911925968182"
-       ],
-       type: "Point"
-     },
-  properties: {
-    arrayID: 0,
-    description: "<div class=\"w-embed\"><input type=\"hidden\" id=\"locationID\" value=\"the-snowboard-asylum\">\n<input type=\"hidden\" id=\"locationLatitude\" value=\"57.18911925968182\">\n<input type=\"hidden\" id=\"locationLongitude\" value=\"-3.829261019496421\"></div><div class=\"locations-map_name\"><div class=\"text-block\">The Snowboard Asylum</div></div><div class=\"locations-map_population-wrapper\"><div class=\"text-block-2\">Scotland</div></div>",
-    id: "the-snowboard-asylum",
-    markerColor: "#fc000b"
-  },
-  type: "Feature"
-  }
-  ],
+  features: features,
 };
 
 export default function Map() {
@@ -105,15 +107,16 @@ export default function Map() {
         setZoom(mapZoom)
         })
 
-        /*
+        
         console.log(mapRef);
         //load mappoints
         //addMapPoints();
         
+        mapRef.current.on('load', () => {
         mapRef.current.addLayer({
           id: "locations",
           type: "circle",
-          /* Add a GeoJSON source containing place coordinates and information. *//*
+          /* Add a GeoJSON source containing place coordinates and information. */
           source: {
               type: "geojson",
               data: mapLocations,
@@ -125,8 +128,10 @@ export default function Map() {
               "circle-opacity": 1,
               "circle-stroke-color": "#FFFF00",
           },
-      });*/
+      });/**/
+    })
 
+    /*
       mapRef.current.on('load', () => {
         const layers = mapRef.current.getStyle().layers;
         let firstSymbolId;
@@ -155,6 +160,7 @@ export default function Map() {
           firstSymbolId
         );
       })
+        */
       
     
         return () => {
@@ -181,3 +187,26 @@ export default function Map() {
     </>    
   );
 }
+
+/*
+[
+  {
+    geometry:
+     {
+       coordinates:
+       [
+         "-3.829261019496421",
+         "57.18911925968182"
+       ],
+       type: "Point"
+     },
+  properties: {
+    arrayID: 0,
+    description: "<div class=\"w-embed\"><input type=\"hidden\" id=\"locationID\" value=\"the-snowboard-asylum\">\n<input type=\"hidden\" id=\"locationLatitude\" value=\"57.18911925968182\">\n<input type=\"hidden\" id=\"locationLongitude\" value=\"-3.829261019496421\"></div><div class=\"locations-map_name\"><div class=\"text-block\">The Snowboard Asylum</div></div><div class=\"locations-map_population-wrapper\"><div class=\"text-block-2\">Scotland</div></div>",
+    id: "the-snowboard-asylum",
+    markerColor: "#fc000b"
+  },
+  type: "Feature"
+  }
+  ]
+*/
