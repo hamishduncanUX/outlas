@@ -24,6 +24,31 @@ const INITIAL_CENTER = [
 ]
 const INITIAL_ZOOM = 6.56
 
+// create empty locations geojson object
+let mapLocations = {
+  type: "FeatureCollection",
+  features: [
+  {
+    geometry:
+     {
+       coordinates:
+       [
+         "-3.829261019496421",
+         "57.18911925968182"
+       ],
+       type: "Point"
+     },
+  properties: {
+    arrayID: 0,
+    description: "<div class=\"w-embed\"><input type=\"hidden\" id=\"locationID\" value=\"the-snowboard-asylum\">\n<input type=\"hidden\" id=\"locationLatitude\" value=\"57.18911925968182\">\n<input type=\"hidden\" id=\"locationLongitude\" value=\"-3.829261019496421\"></div><div class=\"locations-map_name\"><div class=\"text-block\">The Snowboard Asylum</div></div><div class=\"locations-map_population-wrapper\"><div class=\"text-block-2\">Scotland</div></div>",
+    id: "the-snowboard-asylum",
+    markerColor: "#fc000b"
+  },
+  type: "Feature"
+  }
+  ],
+};
+
 export default function Map() {
 
     const mapRef = useRef()
@@ -32,7 +57,35 @@ export default function Map() {
     const [center, setCenter] = useState(INITIAL_CENTER)
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
 
-    mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';   
+    mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+/*
+    console.log('map...')
+    console.log(Map)
+
+    console.log('mapRef...')
+    console.log(mapRef)*/
+    
+    /*
+    function addMapPoints() {
+      /* Add the data to your map as a layer *//*
+      mapRef.addLayer({
+          id: "locations",
+          type: "circle",
+          /* Add a GeoJSON source containing place coordinates and information. *//*
+          source: {
+              type: "geojson",
+              data: mapLocations,
+          },
+          paint: {
+              "circle-radius": 10,
+              "circle-stroke-width": 0,
+              "circle-color": ["get", "markerColor"],
+              "circle-opacity": 1,
+              "circle-stroke-color": "#FFFF00",
+          },
+      });
+    }
+    */
 
     useEffect(() => {        
         mapRef.current = new mapboxgl.Map({
@@ -51,6 +104,58 @@ export default function Map() {
         setCenter([ mapCenter.lng, mapCenter.lat ])
         setZoom(mapZoom)
         })
+
+        /*
+        console.log(mapRef);
+        //load mappoints
+        //addMapPoints();
+        
+        mapRef.current.addLayer({
+          id: "locations",
+          type: "circle",
+          /* Add a GeoJSON source containing place coordinates and information. *//*
+          source: {
+              type: "geojson",
+              data: mapLocations,
+          },
+          paint: {
+              "circle-radius": 10,
+              "circle-stroke-width": 0,
+              "circle-color": ["get", "markerColor"],
+              "circle-opacity": 1,
+              "circle-stroke-color": "#FFFF00",
+          },
+      });*/
+
+      mapRef.current.on('load', () => {
+        const layers = mapRef.current.getStyle().layers;
+        let firstSymbolId;
+        for (const layer of layers) {
+          if (layer.type === 'symbol') {
+            firstSymbolId = layer.id;
+            break;
+          }
+        }
+  
+        mapRef.current.addSource('urban-areas', {
+          type: 'geojson',
+          data: 'https://docs.mapbox.com/mapbox-gl-js/assets/ne_50m_urban_areas.geojson'
+        });
+        mapRef.current.addLayer(
+          {
+            id: 'urban-areas-fill',
+            type: 'fill',
+            source: 'urban-areas',
+            layout: {},
+            paint: {
+              'fill-color': '#f08',
+              'fill-opacity': 0.4
+            }
+          },
+          firstSymbolId
+        );
+      })
+      
     
         return () => {
           mapRef.current.remove()
