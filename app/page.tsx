@@ -1,18 +1,20 @@
 import Image from "next/image";
 import { sql } from "@vercel/postgres";
 import Map from "./ui/mapbox/map";
+import { fetchResorts } from "./lib/data";
+import { Resorts } from "./definitions/mapboxDefinitions";
 
-export default async function Cart(
-  
-): Promise<JSX.Element> {
-  //this shows the database link is working
-  const { rows } = await sql`SELECT * FROM testTable`;
-  //logs the output from the database
-  console.log(rows);
+//
+
+export default async function Home(): Promise<JSX.Element> {  
+
+  const resorts: Resorts[] = await fetchResorts();  
 
   return (
           <>
-            <Map></Map>
+            <Map
+              resorts={resorts}
+            ></Map>
           </>    
   );
 }

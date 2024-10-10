@@ -3,7 +3,8 @@
 import { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
-import data from './mockApiData.json';
+import { Resorts } from '@/app/definitions/mapboxDefinitions';
+
 
 //Proof of concept for mapbox-gl usage within nextjs (React) app
 
@@ -19,64 +20,92 @@ an error
 
 */
 
+//defines initial values to be adopted by state
 const INITIAL_CENTER = [
   -4.205, 
   57.122
 ]
 const INITIAL_ZOOM = 6.56
 
-const features = data.map((x) => {
-  return {
-    geometry:
-    {
-      coordinates:
-      [
-        x.Long, x.Lat
-      ],
-      type: "Point"
-    },
-    properties: {
-      id: x.Slug,
-      markerColor: "#fc000b"
-    },
-    type: "Feature"
+//main React function
+export default function Map(
+  {
+    resorts
+  }:
+  {
+    resorts: Resorts[]
   }
-})
+) {
 
-//console.log(features);
-
-// create empty locations geojson object
-let mapLocations = {
-  type: "FeatureCollection",
-  features: features,
-};
-
-export default function Map() {
-
+    //configures mapbox variables
     const mapRef = useRef()
     const mapContainerRef = useRef()
     
+    //initialises state for focal position of map and degree of zoom
     const [center, setCenter] = useState(INITIAL_CENTER)
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
 
-    mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
-/*
-    console.log('map...')
-    console.log(Map)
+    //fetches mapbox access token from .env
+    mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';    
 
-    console.log('mapRef...')
-    console.log(mapRef)*/
+    //This parses the database data passed via resorts prop to create an array of features, which will
+    //be rendered as red dots on the map - locations of interest incl resorts
+    const features = resorts.map((x) => {
+      return {
+        geometry:
+        {
+          coordinates:
+          [
+            x.long, x.lat
+          ],
+          type: "Point"
+        },
+        properties: {
+          id: x.slug,
+          markerColor: "#fc000b"
+        },
+        type: "Feature"
+      }
+    })
     
-    /*
-    function addMapPoints() {
-      /* Add the data to your map as a layer *//*
-      mapRef.addLayer({
+    // create empty locations geojson object
+    let mapLocations = {
+      type: "FeatureCollection",
+      features: features,
+    };
+
+
+    //very important function, on first load and rerender this automatically renders the map
+    useEffect(() => {
+        //creates a new instance of Map, centered and zoomed as per the current state values
+        mapRef.current = new mapboxgl.Map({
+          container: mapContainerRef.current,
+          center: center,
+          style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",            
+          zoom: zoom
+        });
+
+        //when the user moves the map, this obtains the new values for centre and zoom and updates the state
+        mapRef.current.on('move', () => {
+        // get the current center coordinates and zoom level from the map
+        const mapCenter = mapRef.current.getCenter()
+        const mapZoom = mapRef.current.getZoom()
+
+        // update state
+        setCenter([ mapCenter.lng, mapCenter.lat ])
+        setZoom(mapZoom)
+        })        
+        
+        //similar to the parent useEffect function, this detects when it will be necessary to add a layer of additional detail...
+        mapRef.current.on('load', () => {
+        //...specifically this layer of the red dots marking locations of interesting, incl resorts
+          mapRef.current.addLayer({
           id: "locations",
           type: "circle",
-          /* Add a GeoJSON source containing place coordinates and information. *//*
+          /* Add a GeoJSON source containing place coordinates and information. */
           source: {
               type: "geojson",
-              data: mapLocations,
+              data: mapLocations, //see mapLocations and features const variables above, the data of which is imported here
           },
           paint: {
               "circle-radius": 10,
@@ -86,88 +115,14 @@ export default function Map() {
               "circle-stroke-color": "#FFFF00",
           },
       });
-    }
-    */
-
-    useEffect(() => {        
-        mapRef.current = new mapboxgl.Map({
-          container: mapContainerRef.current,
-          center: center,
-          style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",            
-          zoom: zoom
-        });
-
-        mapRef.current.on('move', () => {
-        // get the current center coordinates and zoom level from the map
-        const mapCenter = mapRef.current.getCenter()
-        const mapZoom = mapRef.current.getZoom()
-
-        // update state
-        setCenter([ mapCenter.lng, mapCenter.lat ])
-        setZoom(mapZoom)
-        })
-
-        
-        console.log(mapRef);
-        //load mappoints
-        //addMapPoints();
-        
-        mapRef.current.on('load', () => {
-        mapRef.current.addLayer({
-          id: "locations",
-          type: "circle",
-          /* Add a GeoJSON source containing place coordinates and information. */
-          source: {
-              type: "geojson",
-              data: mapLocations,
-          },
-          paint: {
-              "circle-radius": 10,
-              "circle-stroke-width": 0,
-              "circle-color": ["get", "markerColor"],
-              "circle-opacity": 1,
-              "circle-stroke-color": "#FFFF00",
-          },
-      });/**/
-    })
-
-    /*
-      mapRef.current.on('load', () => {
-        const layers = mapRef.current.getStyle().layers;
-        let firstSymbolId;
-        for (const layer of layers) {
-          if (layer.type === 'symbol') {
-            firstSymbolId = layer.id;
-            break;
-          }
-        }
-  
-        mapRef.current.addSource('urban-areas', {
-          type: 'geojson',
-          data: 'https://docs.mapbox.com/mapbox-gl-js/assets/ne_50m_urban_areas.geojson'
-        });
-        mapRef.current.addLayer(
-          {
-            id: 'urban-areas-fill',
-            type: 'fill',
-            source: 'urban-areas',
-            layout: {},
-            paint: {
-              'fill-color': '#f08',
-              'fill-opacity': 0.4
-            }
-          },
-          firstSymbolId
-        );
-      })
-        */
-      
+    })      
     
         return () => {
           mapRef.current.remove()
         }
-      }, [])
+      }, []) //useEffect function ends
 
+      //this manages the user's interactions with the maps, zooming and moving centre
       const handleButtonClick = () => {
         mapRef.current.flyTo({
           center: INITIAL_CENTER,
@@ -187,26 +142,3 @@ export default function Map() {
     </>    
   );
 }
-
-/*
-[
-  {
-    geometry:
-     {
-       coordinates:
-       [
-         "-3.829261019496421",
-         "57.18911925968182"
-       ],
-       type: "Point"
-     },
-  properties: {
-    arrayID: 0,
-    description: "<div class=\"w-embed\"><input type=\"hidden\" id=\"locationID\" value=\"the-snowboard-asylum\">\n<input type=\"hidden\" id=\"locationLatitude\" value=\"57.18911925968182\">\n<input type=\"hidden\" id=\"locationLongitude\" value=\"-3.829261019496421\"></div><div class=\"locations-map_name\"><div class=\"text-block\">The Snowboard Asylum</div></div><div class=\"locations-map_population-wrapper\"><div class=\"text-block-2\">Scotland</div></div>",
-    id: "the-snowboard-asylum",
-    markerColor: "#fc000b"
-  },
-  type: "Feature"
-  }
-  ]
-*/
