@@ -4,8 +4,6 @@ import Map from "./ui/mapbox/map";
 import { fetchResorts } from "./lib/data";
 import { Resorts } from "./definitions/mapboxDefinitions";
 
-//
-
 export default async function Home(): Promise<JSX.Element> {  
 
   const resorts: Resorts[] = await fetchResorts();  
@@ -14,7 +12,7 @@ export default async function Home(): Promise<JSX.Element> {
           <>
             <Map
               resorts={resorts}
-            ></Map>
+            ></Map>            
           </>    
   );
 }

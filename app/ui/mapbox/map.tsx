@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts } from '@/app/definitions/mapboxDefinitions';
+import Sidebar from '../sidebar';
 
 
 //Proof of concept for mapbox-gl usage within nextjs (React) app
@@ -44,6 +45,7 @@ export default function Map(
     //initialises state for focal position of map and degree of zoom
     const [center, setCenter] = useState(INITIAL_CENTER)
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
+    const [sidebar, setSidebar] = useState(false)
 
     //fetches mapbox access token from .env
     mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';    
@@ -130,6 +132,15 @@ export default function Map(
         })
       }
 
+      const handleSidebarClick = () => {
+        console.log('handleSidebarClick activated');
+        return setSidebar(true);        
+      }
+
+      const handleCloseClick = () => {
+        return setSidebar(!sidebar);
+      }
+
   return (
     <>
       <div className="sidebar">
@@ -138,7 +149,14 @@ export default function Map(
       <button className='reset-button' onClick={handleButtonClick}>
         Reset
       </button>
+      <button className='reset-button' style={{top: '100px'}} onClick={handleSidebarClick}>
+        sidebar
+      </button>
       <div id='map-container' ref={mapContainerRef}/>
+      <Sidebar 
+        show={sidebar}
+        closeNav={handleCloseClick}
+      />
     </>    
   );
 }
