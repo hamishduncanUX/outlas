@@ -64,7 +64,7 @@ export default function Map(
         },
         properties: {
           id: x.slug,
-          markerColor: "#fc000b"
+          markerColor: "#800080"
         },
         type: "Feature"
       }
@@ -114,7 +114,7 @@ export default function Map(
               "circle-stroke-width": 0,
               "circle-color": ["get", "markerColor"],
               "circle-opacity": 1,
-              "circle-stroke-color": "#FFFF00",
+              "circle-stroke-color": "#800080",
           },
       });
     })      
