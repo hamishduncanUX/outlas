@@ -42,3 +42,4 @@ databaseInitiation.sql
 #/app/databaseSeed/seedingFile.ts
 /app/ui/mapbox/resortsData.json
 /app/ui/mapbox/repairsData.json
+/app/ui/mapbox/mockApiData.json
