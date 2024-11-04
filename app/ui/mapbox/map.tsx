@@ -77,11 +77,58 @@ export default function Map(
         type: "Feature"
       }
     })
+
+    //This is a function which takes as input an array of objects with data about either resorts, rentals or repairs,
+    //along with an arrayType argument of "resorts", "rentals" or "repairs" and outputs a simplified array of objects
+    //containing the latitude, longitude, pin colour and other essential details to enable rendering on the map
+    //(see below)
+    function features2(inputArray: Resorts[] | Rentals[] | Repairs[], arrayType: string){
+      let markerColor: string;
+      switch(arrayType){
+        case 'resorts':
+          markerColor = '#00ff00';
+          break;
+        case 'repairs':
+          markerColor = '#FF0000';
+          break;
+        case 'rentals':
+          markerColor = '#0000FF';
+          break;
+        default:
+          markerColor = '#ffff00';
+          break;
+      }
+      const outputArray = inputArray.map((x) => {
+        return {
+          geometry:
+          {
+            coordinates:
+            [
+              x.long, x.lat
+            ],
+            type: "Point"
+          },
+          properties: {
+            id: x.slug,
+            markerColor: markerColor
+          },
+          type: "Feature"
+        }
+      })
+      return outputArray;
+
+    }
     
+    //this makes an array composed of all the different rental, resorts and repairs data, which is then passed into
+    //the map locations object directly below
+    const allData = features2(resorts, 'resorts').concat(features2(rentals, 'rentals'), features2(repairs, 'repairs'));
+    
+    //console.log(allData)
+
     // create empty locations geojson object
     let mapLocations = {
       type: "FeatureCollection",
-      features: features,
+      features: allData,
     };
 
 
