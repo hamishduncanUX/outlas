@@ -6,21 +6,41 @@
 //data structures will be passed in different situations, as passing data in packets that clash with those structures
 //could cause an error if we have designed logic that expects one set of values but gets another
 
+export type Rentals = {
+      rental_name: string;
+      slug: string;
+      item_id: string;
+      resorts: string;
+      gear_for_rent: string;
+      email_address: string;
+      profile_picture: string;
+      resort_description: string;
+      phone_number: string;
+      resort_website: string;
+      social_media_link: string;
+      reason_signed_up: string;
+      resort_Address: string;
+      lat: number;
+      long: number;
+      regions: string;
+
+}
+
 export type Resorts = {
-    resort_name: string,
-    slug: string,
-    item_id: string,
-    resorts: string,
-    gear_for_rent: string,
-    email_address: string,
-    profile_picture: string,
-    resort_description: string,
-    phone_number: string,
-    resort_website: string,
-    social_media_link: string,
-    reason_signed_up: string,
-    resort_address: string,
-    lat: number,
-    long: number,
-    regions: string
+    resort_name: string;
+    slug: string;
+    item_id: string;
+    resorts: string;
+    gear_for_rent: string;
+    email_address: string;
+    profile_picture: string;
+    resort_description: string;
+    phone_number: string;
+    resort_website: string;
+    social_media_link: string;
+    reason_signed_up: string;
+    resort_address: string;
+    lat: number;
+    long: number;
+    regions: string;
 }
