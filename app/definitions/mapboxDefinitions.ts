@@ -6,6 +6,22 @@
 //data structures will be passed in different situations, as passing data in packets that clash with those structures
 //could cause an error if we have designed logic that expects one set of values but gets another
 
+export type Repairs = {
+      name: string;
+      repair_address: string;
+      repair_phone: string;
+      repair_website: string;
+      regions: string;
+      accept_in_person_visits: string;
+      image: string;
+      opening_times: string;
+      item_id: string;
+      slug: string;
+      status: string;
+      lat: number;
+      long: number;
+}
+
 export type Rentals = {
       rental_name: string;
       slug: string;

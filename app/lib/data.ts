@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Resorts, Rentals } from "../definitions/mapboxDefinitions";
+import { Resorts, Rentals, Repairs } from "../definitions/mapboxDefinitions";
 
 //this is the function that fetches resort data from the database. Although it is not stated, this is a server function.
 //what does that mean? It means that the code is executed on the servers where your code is stored, not in the user's 
@@ -36,6 +36,23 @@ export const fetchRentals = async () => {
         const rentalsDataArray = rentalsData.rows;
 
         return rentalsDataArray;
+
+    } catch (error){
+        console.log(error)        
+        throw new Error('unspecified error');
+    }
+}
+
+export const fetchRepairs = async () => {
+
+    //initialises query to pass to database. Returns all of the information from database resorts
+    const query = `SELECT * FROM repairs`
+
+    try {
+
+        const repairsData = await sql.query<Repairs>(query);
+
+        return repairsData.rows;
 
     } catch (error){
         console.log(error)        

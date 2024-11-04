@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Resorts, Rentals } from '@/app/definitions/mapboxDefinitions';
+import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
 
 
@@ -32,15 +32,20 @@ const INITIAL_ZOOM = 6.56
 export default function Map(
   {
     resorts,
-    rentals
+    rentals,
+    repairs
   }:
   {
     resorts: Resorts[],
-    rentals: Rentals[]
+    rentals: Rentals[],
+    repairs: Repairs[]
   }
 ) {
 
-    console.log(rentals);
+  repairs.map((x)=> {
+    console.log(x.name);
+  })  
+  
     //configures mapbox variables
     const mapRef = useRef()
     const mapContainerRef = useRef()
