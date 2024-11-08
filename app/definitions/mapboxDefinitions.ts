@@ -23,7 +23,7 @@ export type Repairs = {
 }
 
 export type Rentals = {
-      rental_name: string;
+      name: string;
       slug: string;
       item_id: string;
       resorts: string;
