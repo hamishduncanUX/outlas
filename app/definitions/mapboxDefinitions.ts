@@ -43,7 +43,7 @@ export type Rentals = {
 }
 
 export type Resorts = {
-    resort_name: string;
+    name: string;
     slug: string;
     item_id: string;
     resorts: string;
