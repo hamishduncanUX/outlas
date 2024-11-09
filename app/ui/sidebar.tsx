@@ -1,6 +1,18 @@
 import './sidebar.css';
+import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 
-export default function Sidebar({show, closeNav}: {show: boolean, closeNav: any}) {
+export default function Sidebar(
+    {
+        show, 
+        closeNav, 
+        content
+    } : 
+    {
+        show: boolean, 
+        closeNav: any, 
+        content: Resorts | Rentals | Repairs
+    }
+) {
 
     //const closeNav = () => {
        // console.log('closeNav called');
@@ -10,7 +22,8 @@ export default function Sidebar({show, closeNav}: {show: boolean, closeNav: any}
         width: show ? '250px' : '0px'
     }
 
-    
+    console.log('content')
+    console.log(content);
 
     return (        
         <div id="mySidenav" className="sidenav" style={showSidebar}>
