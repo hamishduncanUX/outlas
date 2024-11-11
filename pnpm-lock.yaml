@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@types/geojson':
+        specifier: ^7946.0.14
+        version: 7946.0.14
       '@vercel/postgres':
         specifier: ^0.10.0
         version: 0.10.0
