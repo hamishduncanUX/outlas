@@ -1,13 +1,10 @@
 "use client"
 
 import { useRef, useEffect, useState, MutableRefObject } from 'react'
-import mapboxgl, { LngLatLike, GeoJSONSourceRaw } from 'mapbox-gl'
+import mapboxgl, { LngLatLike, Point } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
-
-
-//Proof of concept for mapbox-gl usage within nextjs (React) app
 
 /*
 Notes:
@@ -20,6 +17,7 @@ for optimum security
 an error
 
 */
+
 
 //defines initial values to be adopted by state
 const INITIAL_CENTER: [number, number] = [
@@ -43,8 +41,8 @@ export default function Map(
 ) { 
   
     //configures mapbox variables
-    const mapRef = useRef()
-    const mapContainerRef = useRef<HTMLDivElement>()
+    const mapRef = useRef<mapboxgl.Map>()
+    const mapContainerRef = useRef<HTMLDivElement>(null)
     const markerRef = useRef();
     
     //initialises state for focal position of map, degree of zoom, sidebar display and sidebar content
@@ -56,46 +54,11 @@ export default function Map(
     //fetches mapbox access token from .env
     mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';  
     
-    //combines all the rentals, resorts and repairs data into a single array
-    const allDatabaseData = [...repairs, ...rentals, ...resorts];
-    
+    //combines all the rentals, resorts and repairs data into a single array. Spread syntax is used to enable objects
+    //of very different types to be combined. This makes it easier to recover the details associated with a given map
+    //pin
+    const allDatabaseData = [...repairs, ...rentals, ...resorts];    
 
-    //This parses the database data passed via resorts prop to create an array of features, which will
-    //be rendered as red dots on the map - locations of interest incl resorts
-    /*
-    const features = kajungArray.map((x) => {
-      let markerColor: string;
-      switch(typeof x){
-        case 'resorts':
-          markerColor = '#00ff00';
-          break;
-        case 'repairs':
-          markerColor = '#FF0000';
-          break;
-        case 'rentals':
-          markerColor = '#0000FF';
-          break;
-        default:
-          markerColor = '#ffff00';
-          break;
-      }
-      return {
-        geometry:
-        {
-          coordinates:
-          [
-            x.long, x.lat
-          ],
-          type: "Point"
-        },
-        properties: {
-          id: x.slug,
-          markerColor: markerColor
-        },
-        type: "Feature"
-      }
-    })
-*/
     //This is a function which takes as input an array of objects with data about either resorts, rentals or repairs,
     //along with an arrayType argument of "resorts", "rentals" or "repairs" and outputs a simplified array of objects
     //containing the latitude, longitude, pin colour and other essential details to enable rendering on the map
@@ -117,55 +80,40 @@ export default function Map(
           break;
       }
       const outputArray = inputArray.map((x) => {        
-        return {
+        return {          
           geometry:
           {
             coordinates:
             [
               x.long, x.lat
             ],
-            type: "Point"
+            type: "Point" as const
           },
           properties: {
+            name: x.name,
             id: x.slug,
             markerColor: markerColor,
             dataType: arrayType
           },
-          type: "Feature"
+          type: "Feature" as const
         }
       })
       return outputArray;
-
     }
     
     //this calls the above features function for all the different types of location - rental, resorts and repairs - and combines
     //the resulting data into a single array     
     const pinsDataAllLocationTypes = features(resorts, 'resorts').concat(features(rentals, 'rentals'), features(repairs, 'repairs'));
     
-    // this takes the data from the above variable pinsDataAllLocationTypes to arrange the data in a format
-    //readable by the mapbox logic (creates an empty locations geojson object)
-    let mapLocations = {
-      type: "FeatureCollection",
-      features: pinsDataAllLocationTypes,      
-    };
-
-
     //very important function, on first load and rerender this automatically renders the map
     useEffect(() => {
-        //creates a new instance of Map, centered and zoomed as per the current state values   
+           
+        //escapes function if mapContainerRef.current is undefined
         if (!mapContainerRef.current){
           return;
         }
-        /*
-        if (mapContainerRef.current){
-          const map = new mapboxgl.Map({
-            container: mapContainerRef.current,
-          center: center,
-          style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",
-          zoom: zoom
-        });          
-        }        
-        */
+        
+        //creates a new instance of Map, centered and zoomed as per the current state values
         mapRef.current = new mapboxgl.Map({
           container: mapContainerRef.current,
           center: center,
@@ -175,107 +123,86 @@ export default function Map(
 
         //when the user moves the map, this obtains the new values for centre and zoom and updates the state
         mapRef.current.on('move', () => {
-        // get the current center coordinates and zoom level from the map
-        const mapCenter = mapRef.current.getCenter()
-        const mapZoom = mapRef.current.getZoom()
+        
+          //escapes function if mapRef.current undefined
+          if (!mapRef.current){
+            return;
+          }
 
-        // update state
-        setCenter([ mapCenter.lng, mapCenter.lat ])
-        setZoom(mapZoom)
+          // get the current center coordinates and zoom level from the map
+          const mapCenter = mapRef.current.getCenter()
+          const mapZoom = mapRef.current.getZoom()
+
+          // update state
+          setCenter([ mapCenter.lng, mapCenter.lat ])
+          setZoom(mapZoom)
         })        
         
         //similar to the parent useEffect function, this detects when it will be necessary to add a layer of additional detail...
         mapRef.current.on('load', () => {
-        //...specifically this layer of the red dots marking locations of interesting, incl resorts
+        
+          //(escapes function if mapRef.current undefined)
+          if (!mapRef.current){
+            return;
+          }
+
+          //...specifically this layer of the pins marking resorts, rental shops and repair shops
           mapRef.current.addLayer({
-          id: "locations",
-          type: "circle",
-          /* Add a GeoJSON source containing place coordinates and information. */
-          source: {
-              type: "geojson",
-              data: mapLocations, //see mapLocations and features const variables above, the data of which is imported here
-          },
-          paint: {
+            id: "locations",
+            type: "circle",
+            /* Add a GeoJSON source containing place coordinates and information. */
+            source: {
+              type: "geojson",              
+              data: {
+                type: "FeatureCollection",
+                features: pinsDataAllLocationTypes
+              }
+            },
+            paint: {
               "circle-radius": 10,
               "circle-stroke-width": 0,
               "circle-color": ["get", "markerColor"],
               "circle-opacity": 1,
               "circle-stroke-color": "#800080",
-          },
-      });
-    })      
+            },
+          });
+        })    
 
-           // Initialize the map
-           //const map = new mapboxgl.Map({});
-           // Set an event listener
-    /*
-           mapRef.current.on('click', (e: any) => {
-      console.log(`A click event has occurred at ${e.lngLat}`);
-      const features = mapRef.current.queryRenderedFeatures(e.point, {
-        layers: ['locations'] // replace with your layer name
-        });
-        if (!features.length) {
-        return;
-        }
-        const feature = features[0];
-        console.log('click function...')
-        console.log(feature);
-    });*/
+        mapRef.current.on("click", "locations", (e: any) => {
+          //find ID of collection item in array
+          const ID = e.features[0].properties.id;
+          const details = allDatabaseData.filter((x) => {
+            return x.slug === ID;
+          })
+          setSidebarContent(details[0]);
+          setSidebar(true);
 
-mapRef.current.on("click", "locations", (e: any) => {
-  //find ID of collection item in array
-const ID = e.features[0].properties.id;
-const details = allDatabaseData.filter((x) => {
-  return x.slug === ID;
-})
-setSidebarContent(details[0]);
-setSidebar(true);
-
-/*
-.setHTML(
-         `<h3>${e.features[0].properties.id}</h3><p>${e.features[0].properties.description}</p>`
-       ) */
-     //add popup 
-     const popup = new mapboxgl.Popup({ offset: [0, -15] })
-       .setLngLat(e.features[0].geometry.coordinates)
-       .setHTML(
-        `<h3>${details[0].name}</h3>`
-       )
-       
-       .addTo(mapRef.current);
-
- //addPopup(e);
-      })
-
-    /*popover code starts*/
-    const monument: LngLatLike = [-3.1409, 57];
-    /*mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: monument,
-      zoom: 15
-    });*/
-
-    const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-      'Construction on the Washington Monument began in 1848.'
-    );
-
-   new mapboxgl.Marker(markerRef.current)
-    .setLngLat(monument)
-    .setPopup(popup)
-    .addTo(mapRef.current);/**/
-   /*popover code ends*/
-    
+          //escapes if mapRef.current undefined 
+          if (!mapRef.current){
+            return;
+          }
+          //add popup
+          const popup = new mapboxgl.Popup({ offset: [0, -15] })
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(
+              `<h3>${details[0].name}</h3>`
+            )
+            .addTo(mapRef.current);            
+        })
     
         return () => {
+          if (!mapRef.current){
+          return;
+        }
           mapRef.current.remove()
         }
-      }, []) //useEffect function ends
-      
-      
+      }, []) //useEffect function ends      
 
       //this manages the user's interactions with the maps, zooming and moving centre
-      const handleButtonClick = () => {
+      const handleButtonClick = () => {        
+        if (!mapRef.current){
+          return;
+        }        
         mapRef.current.flyTo({
           center: INITIAL_CENTER,
           zoom: INITIAL_ZOOM
