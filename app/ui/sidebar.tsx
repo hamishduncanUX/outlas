@@ -10,7 +10,7 @@ export default function Sidebar(
     {
         show: boolean, 
         closeNav: any, 
-        content: Resorts | Rentals | Repairs
+        content: Resorts | Rentals | Repairs | undefined
     }
 ) {
 
