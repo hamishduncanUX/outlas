@@ -1,5 +1,6 @@
 import './sidebar.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
+import ResortInfo from './sidebar/resortInfo';
 
 export default function Sidebar(
     {
@@ -14,25 +15,64 @@ export default function Sidebar(
     }
 ) {
 
-    //const closeNav = () => {
-       // console.log('closeNav called');
-    //}
-
     const showSidebar = {
-        width: show ? '250px' : '0px'
-    }
+        width: show ? '25vw' : '0px',
+        padding: show ? '10px' : '0px'
+    }   
 
-    console.log('content')
-    console.log(content);
+    //this takes the database headings from type 'like_this' to 'Like This'
+    function titleize(slug: string) {
+        var words = slug.split("_");
+        return words.map(function(word) {
+          return word.charAt(0).toUpperCase() + word.substring(1).toLowerCase();
+        }).join(' ');
+      }
 
+      //assigns an initial value for key, which is then incremented below to give a unique value for each rendered item
+      let key: number = 0;
+
+      //list of database data not to render
+      const doNotRender: string[] = ['slug', 'item_id'];
+      
     return (        
-        <div id="mySidenav" className="sidenav" style={showSidebar}>
-          {/*<a href="javascript:void(0)" className="closebtn" onClick={closeNav()}>&times;</a>*/}
-          <button onClick={closeNav} style={{color: 'white'}}>X</button>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Clients</a>
-          <a href="#">Contact</a>
+        <div id="mySidenav" className="sidenav p-4" style={showSidebar}>
+          
+          <button onClick={closeNav} style={{color: 'black'}}>X</button>
+          {/*The logic below first of all checks to see if there is data to render. If there is, it will receive
+             an object of data for either a resort, rental shop or repair shop. For each database column heading,
+             (eg: total_score), it renders the column heading as a sub-title (using titleize function above) and 
+             then renders the corresponding information just below that. The only exception is if the data is itself
+             a nested object, in which case that object is parsed using the same logic.
+             There are some exceptions, listed in the doNotRender variable above and currently including 'slug' and 'item_id'
+             (the latter of which should be kept confidential), which are not rendered.
+             Also not rendered are any null entries (eg: if there is nothing listed for "Total Score", neither the
+             "Total Score" heading nor the blank entry will render) or if the database table column heading includes 
+             "picture", in which case that should be rendered as a picture and is not rendered as text
+          */}
+          { content !== undefined ?
+          Object.entries(content).map(([key, value])=> {
+            if (value instanceof Object){
+                return (
+                    <div>
+                        {Object.entries(value).map(([subkey, subvalue]) => {
+                        console.log(subkey, subvalue)
+                        return (
+                            <div className="info-point py-4 mt-1 border-t" key={key = key + 1}>
+                            <h2>{titleize(subkey)}</h2>
+                            <p className="mt-0.5">{subvalue}</p>
+                        </div>
+                        )
+                        })}
+                    </div>
+                )
+            } else if (value && (!doNotRender.includes(key)) && (!key.includes('picture'))){
+            return (<div className="info-point py-4 mt-1 border-t" key={key = key + 1}>
+                <h2>{titleize(key)}</h2>
+                <p className="mt-0.5">{value}</p>
+            </div>)}
+          })
+          : null}
+          
         </div>        
     )
 

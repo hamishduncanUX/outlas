@@ -50,6 +50,7 @@ export default function Map(
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
     const [sidebar, setSidebar] = useState(false)
     const [sidebarContent, setSidebarContent] = useState<Rentals | Repairs | Resorts | undefined>();
+    //const [sidebarType, setSidebarType] = useState<string>('none')
 
     //fetches mapbox access token from .env
     mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';  
@@ -176,6 +177,8 @@ export default function Map(
           })
           setSidebarContent(details[0]);
           setSidebar(true);
+          //setSidebarType(e.features[0].properties.dataType)
+          
 
           //escapes if mapRef.current undefined 
           if (!mapRef.current){
@@ -233,7 +236,7 @@ export default function Map(
       <Sidebar 
         show={sidebar}
         content={sidebarContent}
-        closeNav={handleCloseClick}
+        closeNav={handleCloseClick}        
       />
     </>    
   );
