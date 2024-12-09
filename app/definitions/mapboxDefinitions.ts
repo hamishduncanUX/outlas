@@ -13,7 +13,7 @@ export type Repairs = {
       repair_website: string;
       regions: string;
       accept_in_person_visits: string;
-      image: string;
+      image_url: string;
       opening_times: string;
       item_id: string;
       slug: string;
@@ -39,6 +39,7 @@ export type Rentals = {
       lat: number;
       long: number;
       regions: string;
+      image_url: string;
 
 }
 
@@ -72,7 +73,7 @@ export type Resorts = {
       price_index: string,
       currency: string,
       cover_image: string,
-      main_image: string,
+      image_url: string,
       featured_rental_store: string,
       other_rental_stores: string,
       featured_repair_store: string,
