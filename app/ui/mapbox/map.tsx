@@ -121,7 +121,7 @@ export default function Map(
         mapRef.current = new mapboxgl.Map({
           container: mapContainerRef.current,
           center: center,
-          style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",
+          //style: "mapbox://styles/hambourine/clmrfyzl1028001r4b6x47hyx",
           zoom: zoom
         });
 
