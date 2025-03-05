@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    crossOrigin: 'anonymous'
+    //crossOrigin: 'anonymous'
 };
 
 export default nextConfig;
