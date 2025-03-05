@@ -1,6 +1,7 @@
 import './sidebar.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
-import ResortInfo from './sidebar/resortInfo';
+//import ResortInfo from './sidebar/resortInfo';
+import Image from "next/image";
 
 export default function Sidebar(
     {
@@ -10,7 +11,7 @@ export default function Sidebar(
     } : 
     {
         show: boolean, 
-        closeNav: any, 
+        closeNav: () => void, 
         content: Resorts | Rentals | Repairs | undefined
     }
 ) {
@@ -22,14 +23,25 @@ export default function Sidebar(
 
     //this takes the database headings from type 'like_this' to 'Like This'
     function titleize(slug: string) {
-        var words = slug.split("_");
+        const words = slug.split("_");
         return words.map(function(word) {
           return word.charAt(0).toUpperCase() + word.substring(1).toLowerCase();
         }).join(' ');
       }
 
+      
+    let image: string = ""
+    if (content){
+        if (content.image_url){
+            console.log(`console logs image url: ${content.image_url}`)
+            image = content.image_url;
+        }        
+    }
+    console.log(image)
+    console.log(content)
+
       //assigns an initial value for key, which is then incremented below to give a unique value for each rendered item
-      let key: number = 0;
+      let incrementedKey: number = 0;
 
       //list of database data not to render
       const doNotRender: string[] = ['slug', 'item_id'];
@@ -49,6 +61,24 @@ export default function Sidebar(
              "Total Score" heading nor the blank entry will render) or if the database table column heading includes 
              "picture", in which case that should be rendered as a picture and is not rendered as text
           */}
+          
+          { image ? 
+            <Image 
+              src={`/${image}`}
+              alt={""}
+              width='100'
+              height='80'
+              className='w-full'
+            />        
+          :
+          null
+          } 
+          {/**<Image 
+              src={`/cabin-ski-hire-glenshee.jpg`}
+              alt={""}
+              width='100'
+              height='100'
+            />  */}
           { content !== undefined ?
           Object.entries(content).map(([key, value])=> {
             if (value instanceof Object){
@@ -57,7 +87,7 @@ export default function Sidebar(
                         {Object.entries(value).map(([subkey, subvalue]) => {
                         console.log(subkey, subvalue)
                         return (
-                            <div className="info-point py-4 mt-1 border-t" key={key = key + 1}>
+                            <div className="info-point py-4 mt-1 border-t" key={incrementedKey = incrementedKey + 1}>
                             <h2>{titleize(subkey)}</h2>
                             <p className="mt-0.5">{subvalue}</p>
                         </div>
@@ -66,7 +96,7 @@ export default function Sidebar(
                     </div>
                 )
             } else if (value && (!doNotRender.includes(key)) && (!key.includes('picture'))){
-            return (<div className="info-point py-4 mt-1 border-t" key={key = key + 1}>
+            return (<div className="info-point py-4 mt-1 border-t" key={incrementedKey = incrementedKey + 1}>
                 <h2>{titleize(key)}</h2>
                 <p className="mt-0.5">{value}</p>
             </div>)}

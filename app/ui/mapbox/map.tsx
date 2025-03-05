@@ -1,7 +1,9 @@
 "use client"
 
-import { useRef, useEffect, useState, MutableRefObject } from 'react'
-import mapboxgl, { LngLatLike, Point } from 'mapbox-gl'
+//import { useRef, useEffect, useState, MutableRefObject } from 'react'
+//import mapboxgl, { LngLatLike, Point } from 'mapbox-gl'
+import { useRef, useEffect, useState } from 'react'
+import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
@@ -43,7 +45,7 @@ export default function Map(
     //configures mapbox variables
     const mapRef = useRef<mapboxgl.Map>()
     const mapContainerRef = useRef<HTMLDivElement>(null)
-    const markerRef = useRef();
+    //const markerRef = useRef();
     
     //initialises state for focal position of map, degree of zoom, sidebar display and sidebar content
     const [center, setCenter] = useState(INITIAL_CENTER)
@@ -184,13 +186,15 @@ export default function Map(
           if (!mapRef.current){
             return;
           }
-          //add popup
+          //add popup - THIS WAS PICKED UP BY VERCEL BUILD LOG, AS POPUP DEFINE BUT NEVER USED
+          //MIGHT BE NEEDED IN FUTURE
+          /*
           const popup = new mapboxgl.Popup({ offset: [0, -15] })
             .setLngLat(e.features[0].geometry.coordinates)
             .setHTML(
               `<h3>${details[0].name}</h3>`
             )
-            .addTo(mapRef.current);            
+            .addTo(mapRef.current); */           
         })
     
         return () => {
@@ -199,7 +203,7 @@ export default function Map(
         }
           mapRef.current.remove()
         }
-      }, []) //useEffect function ends      
+      }, []) //useEffect function ends      , [allDatabaseData, center, pinsDataAllLocationTypes, zoom]
 
       //this manages the user's interactions with the maps, zooming and moving centre
       const handleButtonClick = () => {        
