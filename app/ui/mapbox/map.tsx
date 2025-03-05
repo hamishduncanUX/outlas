@@ -178,10 +178,10 @@ export default function Map(
           //if (e.features[0] === undefined){
             //return
           //}
-          if (e.features[0] === undefined){
+          if (e.features === undefined){
             return
           }
-          if (!e.features[0]){
+          if (!e.features){
             return
           }
           
