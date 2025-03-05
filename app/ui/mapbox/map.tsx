@@ -175,7 +175,7 @@ export default function Map(
         //mapRef.current.on("click", "locations", (e: customMouseEvent) => {
           mapRef.current.on("click", "locations", (e: MapMouseEvent) => {
           
-          if (!e.features[0]){
+          if (e.features[0] === undefined){
             return
           }
           const ID = e.features[0].properties.id;
