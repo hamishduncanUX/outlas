@@ -3,7 +3,7 @@
 //import { useRef, useEffect, useState, MutableRefObject } from 'react'
 //import mapboxgl, { LngLatLike, Point } from 'mapbox-gl'
 import { useRef, useEffect, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
+import mapboxgl, { MapMouseEvent } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
@@ -172,7 +172,8 @@ export default function Map(
           });
         })    
 
-        mapRef.current.on("click", "locations", (e: customMouseEvent) => {
+        //mapRef.current.on("click", "locations", (e: customMouseEvent) => {
+          mapRef.current.on("click", "locations", (e: MapMouseEvent) => {
           //find ID of collection item in array
           //let eventFeatures = e.features as HTML;
           //console.log(e.features[0]);
