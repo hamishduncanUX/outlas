@@ -178,7 +178,9 @@ export default function Map(
           //if (e.features[0] === undefined){
             //return
           //}
-          const ID = e.features[0]?.properties?.id;
+          
+          const ID: string = e.features[0]?.properties?.id ?? 'nothing found';
+          console.log(`id = ${ID}`)
           const details = allDatabaseData.filter((x) => {
             return x.slug === ID;
           })
