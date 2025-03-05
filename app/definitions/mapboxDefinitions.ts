@@ -87,3 +87,26 @@ export type Resorts = {
       rentals_two: string,
       sustainability_score_copy: string
 }
+/*
+export interface customEvent<T extends Event> = Event & {
+      target: T;
+      currentTarget: T;
+      features: string[];
+    }*/
+
+    //export interface customEventTarget extends EventTarget {
+      //features: string[];
+    //}
+
+    //interface KonvaTextEventTarget extends EventTarget {
+      //index: number
+    //}
+    
+    export interface customMouseEvent extends React.MouseEvent<HTMLElement> {
+      //target: customEventTarget
+      features: {
+            properties: {
+                  id: string;
+            }
+      }[]
+    }

@@ -7,6 +7,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
+import { customMouseEvent } from '@/app/definitions/mapboxDefinitions';
 
 /*
 Notes:
@@ -171,8 +172,10 @@ export default function Map(
           });
         })    
 
-        mapRef.current.on("click", "locations", (e: any) => {
+        mapRef.current.on("click", "locations", (e: customMouseEvent) => {
           //find ID of collection item in array
+          //let eventFeatures = e.features as HTML;
+          //console.log(e.features[0]);
           const ID = e.features[0].properties.id;
           const details = allDatabaseData.filter((x) => {
             return x.slug === ID;
@@ -217,7 +220,7 @@ export default function Map(
       }
 
       const handleSidebarClick = () => {
-        console.log('handleSidebarClick activated');
+        //console.log('handleSidebarClick activated');
         return setSidebar(true);        
       }
 

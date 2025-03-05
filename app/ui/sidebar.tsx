@@ -33,12 +33,12 @@ export default function Sidebar(
     let image: string = ""
     if (content){
         if (content.image_url){
-            console.log(`console logs image url: ${content.image_url}`)
+            //console.log(`console logs image url: ${content.image_url}`)
             image = content.image_url;
         }        
     }
-    console.log(image)
-    console.log(content)
+    //console.log(image)
+    //console.log(content)
 
       //assigns an initial value for key, which is then incremented below to give a unique value for each rendered item
       let incrementedKey: number = 0;
@@ -83,9 +83,9 @@ export default function Sidebar(
           Object.entries(content).map(([key, value])=> {
             if (value instanceof Object){
                 return (
-                    <div>
+                    <div key={incrementedKey = incrementedKey + 1}>
                         {Object.entries(value).map(([subkey, subvalue]) => {
-                        console.log(subkey, subvalue)
+                        //console.log(subkey, subvalue)
                         return (
                             <div className="info-point py-4 mt-1 border-t" key={incrementedKey = incrementedKey + 1}>
                             <h2>{titleize(subkey)}</h2>
