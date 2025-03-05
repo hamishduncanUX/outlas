@@ -1,6 +1,5 @@
 import './sidebar.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
-//import ResortInfo from './sidebar/resortInfo';
 import Image from "next/image";
 
 export default function Sidebar(
@@ -32,13 +31,10 @@ export default function Sidebar(
       
     let image: string = ""
     if (content){
-        if (content.image_url){
-            //console.log(`console logs image url: ${content.image_url}`)
+        if (content.image_url){            
             image = content.image_url;
         }        
-    }
-    //console.log(image)
-    //console.log(content)
+    }    
 
       //assigns an initial value for key, which is then incremented below to give a unique value for each rendered item
       let incrementedKey: number = 0;
@@ -72,20 +68,13 @@ export default function Sidebar(
             />        
           :
           null
-          } 
-          {/**<Image 
-              src={`/cabin-ski-hire-glenshee.jpg`}
-              alt={""}
-              width='100'
-              height='100'
-            />  */}
+          }           
           { content !== undefined ?
           Object.entries(content).map(([key, value])=> {
             if (value instanceof Object){
                 return (
                     <div key={incrementedKey = incrementedKey + 1}>
-                        {Object.entries(value).map(([subkey, subvalue]) => {
-                        //console.log(subkey, subvalue)
+                        {Object.entries(value).map(([subkey, subvalue]) => {                        
                         return (
                             <div className="info-point py-4 mt-1 border-t" key={incrementedKey = incrementedKey + 1}>
                             <h2>{titleize(subkey)}</h2>

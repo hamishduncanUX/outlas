@@ -45,15 +45,13 @@ export default function Map(
   
     //configures mapbox variables
     const mapRef = useRef<mapboxgl.Map>()
-    const mapContainerRef = useRef<HTMLDivElement>(null)
-    //const markerRef = useRef();
+    const mapContainerRef = useRef<HTMLDivElement>(null)    
     
     //initialises state for focal position of map, degree of zoom, sidebar display and sidebar content
     const [center, setCenter] = useState(INITIAL_CENTER)
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
     const [sidebar, setSidebar] = useState(false)
-    const [sidebarContent, setSidebarContent] = useState<Rentals | Repairs | Resorts | undefined>();
-    //const [sidebarType, setSidebarType] = useState<string>('none')
+    const [sidebarContent, setSidebarContent] = useState<Rentals | Repairs | Resorts | undefined>();    
 
     //fetches mapbox access token from .env
     mapboxgl.accessToken=process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';  
@@ -171,13 +169,12 @@ export default function Map(
             },
           });
         })    
-
-        //mapRef.current.on("click", "locations", (e: customMouseEvent) => {
+        
+        /*
+        This function opens up the sidebar when users click on a pin to get more info        
+        */
           mapRef.current.on("click", "locations", (e: MapMouseEvent) => {
-            //const data = change?.after?.data() ?? someOtherData();
-          //if (e.features[0] === undefined){
-            //return
-          //}
+            
           if (e.features === undefined){
             return
           }
@@ -186,14 +183,14 @@ export default function Map(
           }
           
           const ID: string = e.features[0]?.properties?.id ?? 'nothing found';
-          console.log(`id = ${ID}`)
+          
           const details = allDatabaseData.filter((x) => {
             return x.slug === ID;
           })
+          //uploads state with info about the clicked location
           setSidebarContent(details[0]);
-          setSidebar(true);
-          //setSidebarType(e.features[0].properties.dataType)
-          
+          //opens the sidebar
+          setSidebar(true);          
 
           //escapes if mapRef.current undefined 
           if (!mapRef.current){
@@ -216,7 +213,18 @@ export default function Map(
         }
           mapRef.current.remove()
         }
-      }, []) //useEffect function ends      , [allDatabaseData, center, pinsDataAllLocationTypes, zoom]
+      }, []) //useEffect function ends      
+
+      //SEE DIR ABOVE
+      /*
+      The linter threw an error because of the empty dependency array above. The suggested fixes (either
+        to delete the dep arr or to include a set of identified dependencies) both impaired the functioning.
+        Specifically, you couldn't change the map's centre (so can't scroll to different parts of the world map).
+        The likely fix is to define separate functions with useCallback then call those from useEffect, but
+        that's a job for the future. Instead I disabled the associated linter rule, see eslintrc.json
+
+        "react-hooks/exhaustive-deps": "off"      )
+      */
 
       //this manages the user's interactions with the maps, zooming and moving centre
       const handleButtonClick = () => {        
@@ -229,8 +237,7 @@ export default function Map(
         })
       }
 
-      const handleSidebarClick = () => {
-        //console.log('handleSidebarClick activated');
+      const handleSidebarClick = () => {        
         return setSidebar(true);        
       }
 
