@@ -178,6 +178,12 @@ export default function Map(
           //if (e.features[0] === undefined){
             //return
           //}
+          if (e.features[0] === undefined){
+            return
+          }
+          if (!e.features[0]){
+            return
+          }
           
           const ID: string = e.features[0]?.properties?.id ?? 'nothing found';
           console.log(`id = ${ID}`)
