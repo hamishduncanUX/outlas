@@ -174,11 +174,11 @@ export default function Map(
 
         //mapRef.current.on("click", "locations", (e: customMouseEvent) => {
           mapRef.current.on("click", "locations", (e: MapMouseEvent) => {
-          
-          if (e.features[0] === undefined){
-            return
-          }
-          const ID = e.features[0].properties.id;
+            //const data = change?.after?.data() ?? someOtherData();
+          //if (e.features[0] === undefined){
+            //return
+          //}
+          const ID = e.features[0]?.properties?.id;
           const details = allDatabaseData.filter((x) => {
             return x.slug === ID;
           })
