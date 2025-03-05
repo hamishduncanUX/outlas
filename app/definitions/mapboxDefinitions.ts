@@ -102,6 +102,7 @@ export interface customEvent<T extends Event> = Event & {
       //index: number
     //}
     
+    /*
     export interface customMouseEvent extends React.MouseEvent<HTMLElement> {
       //target: customEventTarget
       features: {
@@ -109,4 +110,4 @@ export interface customEvent<T extends Event> = Event & {
                   id: string;
             }
       }[]
-    }
+    }*/

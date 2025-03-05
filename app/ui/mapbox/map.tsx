@@ -7,7 +7,7 @@ import mapboxgl, { MapMouseEvent } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Sidebar from '../sidebar';
-import { customMouseEvent } from '@/app/definitions/mapboxDefinitions';
+//import { customMouseEvent } from '@/app/definitions/mapboxDefinitions';
 
 /*
 Notes:
