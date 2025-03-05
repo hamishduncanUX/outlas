@@ -174,10 +174,8 @@ export default function Map(
 
         //mapRef.current.on("click", "locations", (e: customMouseEvent) => {
           mapRef.current.on("click", "locations", (e: MapMouseEvent) => {
-          //find ID of collection item in array
-          //let eventFeatures = e.features as HTML;
-          //console.log(e.features[0]);
-          const ID = e.features[0].properties.id;
+          
+          const ID = e.features[0]?.properties.id;
           const details = allDatabaseData.filter((x) => {
             return x.slug === ID;
           })
