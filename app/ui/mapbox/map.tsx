@@ -51,6 +51,7 @@ export default function Map(
     const [center, setCenter] = useState(INITIAL_CENTER)
     const [zoom, setZoom] = useState(INITIAL_ZOOM)
     const [sidebar, setSidebar] = useState(false)
+    const [screenWidth, setScreenWidth] = useState(0);
     const [sidebarContent, setSidebarContent] = useState<Rentals | Repairs | Resorts | undefined>();    
 
     //fetches mapbox access token from .env
@@ -189,6 +190,7 @@ export default function Map(
           })
           //uploads state with info about the clicked location
           setSidebarContent(details[0]);
+          setScreenWidth(screen.width);
           //opens the sidebar
           setSidebar(true);          
 
@@ -260,7 +262,8 @@ export default function Map(
       <Sidebar 
         show={sidebar}
         content={sidebarContent}
-        closeNav={handleCloseClick}        
+        closeNav={handleCloseClick}
+        screenWidth={screenWidth}
       />
     </>    
   );

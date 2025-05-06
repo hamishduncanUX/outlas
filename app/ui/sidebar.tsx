@@ -1,22 +1,34 @@
+"use client"
+
 import './sidebar.css';
 import { Resorts, Rentals, Repairs } from '@/app/definitions/mapboxDefinitions';
 import Image from "next/image";
+import { useEffect } from 'react';
 
 export default function Sidebar(
     {
         show, 
         closeNav, 
-        content
+        content,
+        screenWidth
     } : 
     {
         show: boolean, 
         closeNav: () => void, 
-        content: Resorts | Rentals | Repairs | undefined
+        content: Resorts | Rentals | Repairs | undefined,
+        screenWidth: number
     }
 ) {
 
+  //sets sidebar width as full screen if screen width is less than 768px or quarter screen width
+  //for larger screens. Uses screenWidth prop passed from map.tsx parent
+  let sidebarWidth = screenWidth < 768 ? '100vw' : '25vw' ;
+
+
+  //this effectively toggles the sidebar from zero width (hidden) to the responsive width set
+  //in the term above
     const showSidebar = {
-        width: show ? '25vw' : '0px',
+        width: show ? sidebarWidth : '0px',
         padding: show ? '10px' : '0px'
     }   
 
